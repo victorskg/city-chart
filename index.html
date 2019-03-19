@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Highcharts Example</title>
+
+    <style type="text/css">
+      .container {
+        min-width: 310px;
+        max-width: 800px;
+        height: 400px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../../code/highcharts.js"></script>
+    <script src="../../code/modules/series-label.js"></script>
+    <script src="../../code/modules/exporting.js"></script>
+    <script src="../../code/modules/export-data.js"></script>
+
+    <div id="initialCities" class="container"></div>
+
+    <div id="initialPath" class="container"></div>
+
+    <div id="bestPath" class="container"></div>
+
+    <script type="text/javascript">
+
+        const subtitle = { text: "Caixeiro Viajante" }
+        const responsive = {
+            rules: [
+                {
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: "horizontal",
+                            align: "center",
+                            verticalAlign: "bottom"
+                        }
+                    }
+                }
+            ]
+        }
+
+        const legend = {
+            layout: "vertical",
+            align: "right",
+            verticalAlign: "middle"
+        }
+
+        const plotOptions = {
+            series: {
+                label: {
+                    connectorAllowed: false
+                },
+                pointStart: 0
+            }
+        }
+
+        const yAxis = {
+            title: {
+                text: "Eixo Y"
+            },
+            tickInterval: 1
+        }
+
+        const xAxis = {
+            title: {
+                text: "Eixo X"
+            },
+            tickInterval: 1
+        }
+
+        // Cidade Mokada
+        let initialPath = [0, 19, 7, 5, 3, 1, 4, 6, 2, 17, 16, 10, 11, 13, 14, 15, 8, 12, 9, 18, 0];
+        let bestPath = [0, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+        let coordinatesX = [10.0, 8.0, 6.0, 5.0, 4.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0, 13.0, 14.0, 15.0, 16.0, 16.0, 15.0, 14.0, 12.0];
+        let coordinatesY = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0];
+        
+
+        // Cidade Aleatoria
+        // let initialPath = [0, 5, 6, 7, 9, 8, 1, 2, 3, 4, 0];
+        // let bestPath = [0, 5, 6, 7, 8, 9, 4, 3, 2, 1, 0];
+        // let coordinatesX = [1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+        // let coordinatesY = [2.0, 3.0, 4.0, 5.0, 6.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+
+        const fillSeries = () => {
+            let series = [];
+            for (let index = 0; index < 20; index++) {
+                series.push(
+                    {
+                        name: "Cidade " + index,
+                        data: [[coordinatesX[index], coordinatesY[index]]]
+                    }
+                );
+            }
+            return series;
+        }
+
+        const makePath = (path) => {
+            let series = [];
+            for (let index = 0; index < path.length - 1; index++) {
+                let x1 = coordinatesX[path[index]];
+                let y1 = coordinatesY[path[index]];
+                let x2 = coordinatesX[path[index+1]];
+                let y2 = coordinatesY[path[index+1]];
+                series.push(
+                    {
+                        name: "Caminho de " + path[index] + " á " + path[index+1],
+                        data: [[x1, y1], [x2, y2]]
+                    }
+                );
+            }
+            return series;
+        }
+
+        // Visualização de Caminho Único
+        // const makePath = (path) => {
+        //     let series = [];
+        //     let data = [];
+        //     for (let index = 0; index < path.length; index++) {
+        //         let x1 = coordinatesX[path[index]];
+        //         let y1 = coordinatesY[path[index]];
+        //         data.push([x1, y1]);
+        //     }
+        //     series.push({
+        //         name: "Partindo de: " +  path[0],
+        //         data: data
+        //     })
+        //     return series;
+        // }
+
+        Highcharts.chart("initialCities", {
+            title: {
+                text: "Mapa das Cidades"
+            },
+
+            subtitle: subtitle,
+
+            yAxis: yAxis,
+
+            xAxis: xAxis,
+
+            legend: legend,
+
+            plotOptions: plotOptions,
+
+            series: fillSeries(),
+
+            responsive: responsive
+        });
+
+        Highcharts.chart("initialPath", {
+            title: {
+                text: "Caminho Inicial"
+            },
+
+            subtitle: subtitle,
+
+            yAxis: yAxis,
+
+            xAxis: xAxis,
+
+            legend: legend,
+
+            plotOptions: plotOptions,
+
+            series: makePath(initialPath),
+
+            responsive: responsive
+        });
+
+        Highcharts.chart("bestPath", {
+            title: {
+                text: "Melhor Caminho"
+            },
+
+            subtitle: subtitle,
+
+            yAxis: yAxis,
+
+            xAxis: xAxis,
+
+            legend: legend,
+
+            plotOptions: plotOptions,
+
+            series: makePath(bestPath),
+
+            responsive: responsive
+        });
+    </script>
+  </body>
+</html>
